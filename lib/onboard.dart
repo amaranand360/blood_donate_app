@@ -1,13 +1,5 @@
-import 'package:blood_donate_app/DonorReceiverSelectionScreen.dart';
-import 'package:blood_donate_app/detailscreen.dart';
-import 'package:blood_donate_app/donationscreen.dart';
-import 'package:blood_donate_app/landingscreen.dart';
-import 'package:blood_donate_app/loginscreen.dart';
-import 'package:blood_donate_app/signupscreen.dart';
-import 'package:blood_donate_app/splashscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,36 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Blood Donation App',
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          iconTheme: IconThemeData(color: Colors.black),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.redAccent,
-          ),
-        ),
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.blue,
-          accentColor: Colors.redAccent,
-          brightness: Brightness.light,
-        ).copyWith(secondary: Colors.redAccent, primary: Colors.black),
-      ),
-      initialRoute: '/onboarding',
-      routes: {
-        '/splash': (context) => const SplashScreen(),
-        '/donation': (context) => const DonationScreen(),
-        '/signup': (context) => const SignUpScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/donor_receiver_selection': (context) =>
-            const DonorReceiverSelectionScreen(),
-        '/display_details': (context) => const DisplayDetailsScreen(),
-        '/onboarding': (context) => const OnboardingScreen(),
-      },
+      home: const OnboardingScreen(),
     );
   }
 }
@@ -72,12 +35,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       "description": "Save lives by donating blood to those in need."
     },
     {
-      "image": "assets/donor.png",
+      "image": "assets/pngegg.png",
       "title": "Find Donors",
       "description": "Easily find blood donors nearby when needed."
     },
     {
-      "image": "assets/savelife.avif",
+      "image": "assets/pngegg.png",
       "title": "Save Lives",
       "description": "Your donation can make a difference in someone's life."
     }
@@ -88,7 +51,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       _pageController.nextPage(
           duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     } else {
-      Navigator.pushReplacementNamed(context, '/login');
+      // Navigate to home screen or main app
+      Navigator.pushReplacement(context, 
+          MaterialPageRoute(builder: (context) => const HomeScreen()));
     }
   }
 
@@ -122,16 +87,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               children: [
                 TextButton(
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/');
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => const HomeScreen()));
                   },
-                  child: Text(
-                    "Skip",
-                    style: GoogleFonts.nunitoSans(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  child: const Text("Skip"),
                 ),
                 DotsIndicator(
                   dotsCount: _pages.length,
@@ -146,14 +105,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
                   ),
-                  child: Text(
-                    "Next",
-                    style: GoogleFonts.nunitoSans(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  child: const Text("Next"),
                 ),
               ],
             ),
@@ -187,23 +139,28 @@ class OnboardingPage extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             title,
-            style: GoogleFonts.nunitoSans(
-              color: Colors.black,
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-            ),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
           Text(
             description,
             textAlign: TextAlign.center,
-            style: GoogleFonts.nunitoSans(
-              color: Colors.grey,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
+            style: const TextStyle(fontSize: 16, color: Colors.grey),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text("Welcome to the Blood Donation App!"),
       ),
     );
   }
