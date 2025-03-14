@@ -1,7 +1,6 @@
 import 'package:blood_donate_app/DonorReceiverSelectionScreen.dart';
 import 'package:blood_donate_app/detailscreen.dart';
 import 'package:blood_donate_app/donationscreen.dart';
-import 'package:blood_donate_app/landingscreen.dart';
 import 'package:blood_donate_app/loginscreen.dart';
 import 'package:blood_donate_app/signupscreen.dart';
 import 'package:blood_donate_app/splashscreen.dart';

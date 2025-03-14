@@ -17,7 +17,9 @@ class LoginScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Login'),
       ),
-      body: Padding(
+      body: SafeArea(
+        child:
+      Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -31,7 +33,7 @@ class LoginScreen extends StatelessWidget {
             const Text(
               'Welcome to Blood Donation App',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
@@ -39,7 +41,7 @@ class LoginScreen extends StatelessWidget {
             const SizedBox(height: 10),
             const Text(
               'Enter your email address and password to login',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
             const SizedBox(height: 20),
             const TextField(
@@ -56,7 +58,7 @@ class LoginScreen extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
@@ -75,7 +77,7 @@ class LoginScreen extends StatelessWidget {
             const Text('OR Login with'),
             const SizedBox(height: 10),
             Platform.isAndroid
-                ? SizedBox(height: MediaQuery.of(context).size.height * 0.015)
+                ? SizedBox(height: MediaQuery.of(context).size.height * 0.001)
                 : SizedBox(height: MediaQuery.of(context).size.height * 0.035),
             SizedBox(
               width: 289,
@@ -135,6 +137,7 @@ class LoginScreen extends StatelessWidget {
           ],
         ),
       ),
+    )
     );
   }
 }

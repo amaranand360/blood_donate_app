@@ -1,7 +1,7 @@
 import 'package:blood_donate_app/auth_controller.dart';
 import 'package:blood_donate_app/loginscreen.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
