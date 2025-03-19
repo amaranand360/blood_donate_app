@@ -38,6 +38,9 @@ dependencies:
   dots_indicator: ^4.0.0
   google_fonts: ^6.2.1
   flutter_svg: ^2.0.17
+  image_picker: ^1.1.2
+  flutter_toastify: ^1.0.4
+  carousel_slider: ^5.0.0
 
 dev_dependencies:
   flutter_test:
