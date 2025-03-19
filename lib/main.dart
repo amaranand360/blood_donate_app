@@ -1,12 +1,15 @@
 import 'package:blood_donate_app/DonorReceiverSelectionScreen.dart';
 import 'package:blood_donate_app/detailscreen.dart';
 import 'package:blood_donate_app/donationscreen.dart';
+import 'package:blood_donate_app/home_page.dart';
 import 'package:blood_donate_app/loginscreen.dart';
 import 'package:blood_donate_app/signupscreen.dart';
 import 'package:blood_donate_app/splashscreen.dart';
+import 'package:blood_donate_app/user_type_page.dart';
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -41,13 +44,15 @@ class MyApp extends StatelessWidget {
       initialRoute: '/onboarding',
       routes: {
         '/splash': (context) => const SplashScreen(),
+        '/home': (context) => const HomePage(),
         '/donation': (context) => const DonationScreen(),
-        '/signup': (context) => const SignUpScreen(),
+        '/signup': (context) => const SignupPage(userType: "Doner",),
         '/login': (context) => const LoginScreen(),
         '/donor_receiver_selection': (context) =>
             const DonorReceiverSelectionScreen(),
         '/display_details': (context) => const DisplayDetailsScreen(),
         '/onboarding': (context) => const OnboardingScreen(),
+        '/user_type': (context) => const UserTypePage(),
       },
     );
   }
@@ -87,7 +92,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       _pageController.nextPage(
           duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     } else {
-      Navigator.pushReplacementNamed(context, '/login');
+      Navigator.pushReplacementNamed(context, '/user_type');
     }
   }
 
