@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'find_donors_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -17,24 +18,25 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFD32F2F),
-        title: const Text(
+        title:  Text(
           'Profile',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: GoogleFonts.nunitoSans(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        // leading: IconButton(
-        //   icon: const Icon(Icons.menu, color: Colors.white),
-        //   onPressed: () {
-        //     // Open drawer
-        //   },
-        // ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+              Navigator.pop(context);
+          },
+        ),
         actions: [
           TextButton(
             onPressed: () {
               // Navigate to edit profile
             },
-            child: const Text(
+            child:  Text(
               'Edit',
-              style: TextStyle(
+              style: GoogleFonts.nunitoSans(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
@@ -71,9 +73,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 16),
                   
                   // Name
-                  const Text(
+                   Text(
                     'Alice Capsey',
-                    style: TextStyle(
+                    style: GoogleFonts.nunitoSans(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
@@ -88,7 +90,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       const SizedBox(width: 4),
                       Text(
                         'General Hospital, Rajkot',
-                        style: TextStyle(
+                        style: GoogleFonts.nunitoSans(
                           color: Colors.grey[600],
                           fontSize: 16,
                         ),
@@ -257,7 +259,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               Text(
                 value,
-                style: const TextStyle(
+                style:  GoogleFonts.nunitoSans(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
@@ -265,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 4),
               Text(
                 label,
-                style: TextStyle(
+                style: GoogleFonts.nunitoSans(
                   fontSize: 14,
                   color: Colors.grey[600],
                 ),
@@ -296,7 +298,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(width: 16),
             Text(
               title,
-              style: const TextStyle(
+              style:  GoogleFonts.nunitoSans(
                 fontSize: 16,
               ),
             ),

@@ -1,25 +1,22 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-      bool _obscurePassword = true;
-
-    void signInWithGoogle() async {
-      // Implement Google Sign In here
-    }
+    bool _obscurePassword = true;
 
     return Scaffold(
+      resizeToAvoidBottomInset: true, // Allows content to adjust when the keyboard appears
       appBar: AppBar(
         title: const Text('Login'),
+        centerTitle: true,
       ),
       body: Container(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -32,87 +29,60 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
+          child: SingleChildScrollView( // ✅ Prevents overflow issues
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag, // Dismiss keyboard on scroll
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  const SizedBox(height: 50), // Adjust spacing for better layout
                   Image.asset(
                     'assets/pngegg.png',
                     height: 120,
                     width: 120,
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Welcome to Blood Donation App',
-                    style: TextStyle(
+                    style: GoogleFonts.nunitoSans(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 10),
-                  const Text(
+                  Text(
                     'Enter your email address and password to login',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                    style: GoogleFonts.nunitoSans(fontSize: 14, color: Colors.grey),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                    controller: TextEditingController(),
                     decoration: const InputDecoration(
-                      labelText: 'Name',
-                      prefixIcon:
-                          Icon(Icons.person_outline, color: Colors.grey),
+                      labelText: 'Email',
+                      prefixIcon: Icon(Icons.email_outlined, color: Colors.grey),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your name';
-                      }
-                      return null;
-                    },
                   ),
                   const SizedBox(height: 15),
                   TextFormField(
-                    controller: TextEditingController(),
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      prefixIcon:
-                          const Icon(Icons.lock_outline, color: Colors.grey),
+                      prefixIcon: const Icon(Icons.lock_outline, color: Colors.grey),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
+                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
                           color: Colors.grey,
                         ),
                         onPressed: () {
-                          // setState(() {
-                          //   _obscurePassword = !_obscurePassword;
-                          // });
+                          // Toggle password visibility
                         },
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a password';
-                      }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
-                      return null;
-                    },
                   ),
-                  const SizedBox(height: 15),
-                  // const TextField(
-                  //   obscureText: true,
-                  //   decoration: InputDecoration(
-                  //     labelText: 'Password',
-                  //     border: OutlineInputBorder(),
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 5),
+                  const SizedBox(height: 10),
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -125,62 +95,18 @@ class LoginScreen extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        //
                         Navigator.pushReplacementNamed(context, '/home');
                       },
-                      child: const Text(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                      ),
+                      child: Text(
                         'Login',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
+                        style: GoogleFonts.nunitoSans(fontSize: 16, color: Colors.white),
                       ),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Text('OR Login with'),
-                  const SizedBox(height: 10),
-                  Platform.isAndroid
-                      ? SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.001)
-                      : SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.035),
-                  SizedBox(
-                    width: 289,
-                    height: 38,
-                    child: ElevatedButton(
-                      onPressed: signInWithGoogle,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: const BorderSide(color: Colors.black),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 0),
-                            child: SvgPicture.asset(
-                              "assets/Google_svg.svg",
-                              width:
-                                  20, // Adjust the width according to your SVG size
-                              height:
-                                  20, // Adjust the height according to your SVG size
-                            ),
-                          ),
-                          const SizedBox(width: 25),
-                          // Add some space between the icon and the label
-                          Text(
-                            "Sign in with Google",
-                            style: GoogleFonts.nunitoSans(
-                              color: Colors.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -189,13 +115,14 @@ class LoginScreen extends StatelessWidget {
                         onPressed: () {
                           Navigator.pushNamed(context, '/signup');
                         },
-                        child: const Text(
+                        child: Text(
                           'Signup',
-                          style: TextStyle(color: Colors.red),
+                          style: GoogleFonts.nunitoSans(color: Colors.red),
                         ),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 20), // Extra space at the bottom for scrolling
                 ],
               ),
             ),
@@ -205,6 +132,8 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
+
+
 
 class ReusableButton extends StatelessWidget {
   final String text;
@@ -227,3 +156,52 @@ class ReusableButton extends StatelessWidget {
     );
   }
 }
+
+
+
+    // const Text('OR Login with'),
+                  // const SizedBox(height: 10),
+                  // Platform.isAndroid
+                  //     ? SizedBox(
+                  //         height: MediaQuery.of(context).size.height * 0.001)
+                  //     : SizedBox(
+                  //         height: MediaQuery.of(context).size.height * 0.035),
+                  // SizedBox(
+                  //   width: 289,
+                  //   height: 38,
+                  //   child: ElevatedButton(
+                  //     onPressed: signInWithGoogle,
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor: Colors.white,
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(12),
+                  //         side: const BorderSide(color: Colors.black),
+                  //       ),
+                  //     ),
+                  //     child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.center,
+                  //       children: [
+                  //         Padding(
+                  //           padding: const EdgeInsets.only(left: 0),
+                  //           child: SvgPicture.asset(
+                  //             "assets/Google_svg.svg",
+                  //             width:
+                  //                 20, // Adjust the width according to your SVG size
+                  //             height:
+                  //                 20, // Adjust the height according to your SVG size
+                  //           ),
+                  //         ),
+                  //         const SizedBox(width: 25),
+                  //         // Add some space between the icon and the label
+                  //         Text(
+                  //           "Sign in with Google",
+                  //           style: GoogleFonts.nunitoSans(
+                  //             color: Colors.black,
+                  //             fontSize: 14,
+                  //             fontWeight: FontWeight.w700,
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),

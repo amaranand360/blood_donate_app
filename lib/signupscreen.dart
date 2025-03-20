@@ -70,14 +70,17 @@ class _SignupPageState extends State<SignupPage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFFD32F2F),
         elevation: 0,
-        title:  Text('${widget.userType} Registration', style: TextStyle(color: Colors.white)),
+        title: Text('${widget.userType} Registration',
+            style: GoogleFonts.nunitoSans(color: Colors.white)),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Container(
+      body: SizedBox.expand(
+        child: 
+      Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -157,55 +160,59 @@ class _SignupPageState extends State<SignupPage> {
                     const SizedBox(height: 15),
 
                     // Age field
-                    TextFormField(
-                      controller: _ageController,
-                      decoration: const InputDecoration(
-                        labelText: 'Age',
-                        prefixIcon:
-                            Icon(Icons.calendar_today, color: Colors.grey),
+                    if (widget.userType == 'Donor' ||
+                        widget.userType == 'Patient')
+                      TextFormField(
+                        controller: _ageController,
+                        decoration: const InputDecoration(
+                          labelText: 'Age',
+                          prefixIcon:
+                              Icon(Icons.calendar_today, color: Colors.grey),
+                        ),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your age';
+                          }
+                          final age = int.tryParse(value);
+                          if (age == null || age <= 0 || age > 120) {
+                            return 'Please enter a valid age';
+                          }
+                          return null;
+                        },
                       ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your age';
-                        }
-                        final age = int.tryParse(value);
-                        if (age == null || age <= 0 || age > 120) {
-                          return 'Please enter a valid age';
-                        }
-                        return null;
-                      },
-                    ),
                     const SizedBox(height: 15),
 
                     // Blood Group dropdown
-                    DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.bloodtype, color: Colors.grey),
-                      ),
-                      value: _selectedBloodGroup,
-                      hint: const Text('Select Blood Group'),
-                      items: _bloodGroups.map((String bloodGroup) {
-                        return DropdownMenuItem<String>(
-                          value: bloodGroup,
-                          child: Text(bloodGroup),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedBloodGroup = newValue;
-                        });
-                      },
-                      validator: (value) {
-                        if (widget.userType == 'Donor' ||
-                            widget.userType == 'Patient') {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select your blood group';
+                    if (widget.userType == 'Donor' ||
+                        widget.userType == 'Patient')
+                      DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.bloodtype, color: Colors.grey),
+                        ),
+                        value: _selectedBloodGroup,
+                        hint: const Text('Select Blood Group'),
+                        items: _bloodGroups.map((String bloodGroup) {
+                          return DropdownMenuItem<String>(
+                            value: bloodGroup,
+                            child: Text(bloodGroup),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedBloodGroup = newValue;
+                          });
+                        },
+                        validator: (value) {
+                          if (widget.userType == 'Donor' ||
+                              widget.userType == 'Patient') {
+                            if (value == null || value.isEmpty) {
+                              return 'Please select your blood group';
+                            }
                           }
-                        }
-                        return null;
-                      },
-                    ),
+                          return null;
+                        },
+                      ),
                     const SizedBox(height: 15),
 
                     // Phone field
@@ -252,7 +259,6 @@ class _SignupPageState extends State<SignupPage> {
                       decoration: const InputDecoration(
                         labelText: 'Full Address',
                         prefixIcon: Icon(Icons.home, color: Colors.grey),
-
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -300,11 +306,11 @@ class _SignupPageState extends State<SignupPage> {
                     // Medical report upload (only for Patient and Donor)
                     if (widget.userType == 'Patient' ||
                         widget.userType == 'Donor') ...[
-                      const Align(
+                      Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Medical Report (Optional)',
-                          style: TextStyle(
+                          style: GoogleFonts.nunitoSans(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
@@ -346,7 +352,7 @@ class _SignupPageState extends State<SignupPage> {
                                     _medicalReport != null
                                         ? 'Change Medical Report'
                                         : 'Upload Medical Report',
-                                    style: TextStyle(
+                                    style: GoogleFonts.nunitoSans(
                                       color: Theme.of(context).primaryColor,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -372,76 +378,75 @@ class _SignupPageState extends State<SignupPage> {
                                 content: Text('Processing Sign Up...'),
                                 backgroundColor: Colors.red,
                               ),
-
                             );
                           }
                           Navigator.pushReplacementNamed(context, '/home');
-
                         },
-                        child: const Text(
+                        child: Text(
                           'Sign up',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          style: GoogleFonts.nunitoSans(
+                              fontSize: 16, color: Colors.white),
                         ),
                       ),
                     ),
                     const SizedBox(height: 20),
 
                     // Or connect with
-                    Row(
-                      children: [
-                        const Expanded(child: Divider()),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'Or connect with',
-                            style: TextStyle(
-                                color: Colors.grey[600], fontSize: 14),
-                          ),
-                        ),
-                        const Expanded(child: Divider()),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
+                    // Row(
+                    //   children: [
+                    //     const Expanded(child: Divider()),
+                    //     Padding(
+                    //       padding: const EdgeInsets.symmetric(horizontal: 16),
+                    //       child: Text(
+                    //         'Or connect with',
+                    //         style: TextStyle(
+                    //             color: Colors.grey[600], fontSize: 14),
+                    //       ),
+                    //     ),
+                    //     const Expanded(child: Divider()),
+                    //   ],
+                    // ),
+                    // const SizedBox(height: 20),
 
-                    SizedBox(
-                      width: 289,
-                      height: 38,
-                      child: ElevatedButton(
-                        onPressed: signInWithGoogle,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: const BorderSide(color: Color(0xFFD32F2F)),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 0),
-                              child: SvgPicture.asset(
-                                "assets/Google_svg.svg",
-                                width:
-                                    20, // Adjust the width according to your SVG size
-                                height:
-                                    20, // Adjust the height according to your SVG size
-                              ),
-                            ),
-                            const SizedBox(width: 25),
-                            // Add some space between the icon and the label
-                            Text(
-                              "Sign in with Google",
-                              style: GoogleFonts.nunitoSans(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // SizedBox(
+                    //   width: 289,
+                    //   height: 38,
+                    //   child: ElevatedButton(
+                    //     onPressed: signInWithGoogle,
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: Colors.white,
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(12),
+                    //         side: const BorderSide(color: Color(0xFFD32F2F)),
+                    //       ),
+                    //     ),
+                    //     child: Row(
+                    //       mainAxisAlignment: MainAxisAlignment.center,
+                    //       children: [
+                    //         Padding(
+                    //           padding: const EdgeInsets.only(left: 0),
+                    //           child: SvgPicture.asset(
+                    //             "assets/Google_svg.svg",
+                    //             width:
+                    //                 20, // Adjust the width according to your SVG size
+                    //             height:
+                    //                 20, // Adjust the height according to your SVG size
+                    //           ),
+                    //         ),
+                    //         const SizedBox(width: 25),
+                    //         // Add some space between the icon and the label
+                    //         Text(
+                    //           "Sign in with Google",
+                    //           style: GoogleFonts.nunitoSans(
+                    //             color: Colors.black,
+                    //             fontSize: 14,
+                    //             fontWeight: FontWeight.w700,
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
 
                     const SizedBox(height: 20),
 
@@ -454,9 +459,9 @@ class _SignupPageState extends State<SignupPage> {
                           onPressed: () {
                             Navigator.pushNamed(context, '/login');
                           },
-                          child: const Text(
+                          child: Text(
                             'Login',
-                            style: TextStyle(color: Colors.red),
+                            style: GoogleFonts.nunitoSans(color: Colors.red),
                           ),
                         ),
                       ],
@@ -467,6 +472,7 @@ class _SignupPageState extends State<SignupPage> {
             ),
           ),
         ),
+      ),
       ),
     );
   }

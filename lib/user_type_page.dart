@@ -1,5 +1,6 @@
 import 'package:blood_donate_app/signupscreen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class UserTypePage extends StatefulWidget {
   const UserTypePage({Key? key}) : super(key: key);
@@ -56,9 +57,9 @@ class _UserTypePageState extends State<UserTypePage> {
                         ),
                       ),
                       const SizedBox(height: 40),
-                      const Text(
+                       Text(
                         'I am a',
-                        style: TextStyle(
+                        style: GoogleFonts.nunitoSans(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
@@ -91,7 +92,7 @@ class _UserTypePageState extends State<UserTypePage> {
                       backgroundColor: Colors.red,
                       disabledBackgroundColor: Colors.grey,
                     ),
-                    child: const Text('Confirm', style: TextStyle(fontSize: 16,color: Colors.white)),
+                    child:  Text('Confirm', style: GoogleFonts.nunitoSans(fontSize: 16,color: Colors.white)),
                   ),
                 ),
               ],
@@ -125,7 +126,7 @@ class _UserTypePageState extends State<UserTypePage> {
           children: [
             Text(
               userType,
-              style: TextStyle(
+              style: GoogleFonts.nunitoSans(
                 fontSize: 16,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
