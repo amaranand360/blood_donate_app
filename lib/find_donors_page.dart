@@ -80,12 +80,13 @@ class _FindDonorsPageState extends State<FindDonorsPage> {
           'Find Donors',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        // leading: IconButton(
-        //   icon: const Icon(Icons.menu, color: Colors.white),
-        //   onPressed: () {
-        //     // Open drawer
-        //   },
-        // ),
+         leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+              Navigator.pop(context);
+          },
+        ),
         elevation: 0,
       ),
       body: Column(

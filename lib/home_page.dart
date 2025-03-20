@@ -1,8 +1,12 @@
+import 'package:blood_donate_app/HelpScreen.dart';
+import 'package:blood_donate_app/donation_req.dart';
+import 'package:blood_donate_app/donationscreen.dart';
 import 'package:blood_donate_app/loginscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'find_donors_page.dart';
 import 'profile_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,7 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentCarouselIndex = 0;
   final List<String> _carouselImages = [
     'https://media.istockphoto.com/id/1415405974/photo/blood-donor-at-donation-with-bouncy-ball-holding-in-hand.jpg?s=612x612&w=0&k=20&c=j0nkmkJxIP6U6TsI3yTq8iuc0Ufhq6xoW4FSMlKaG6A=',
@@ -20,49 +24,6 @@ class _HomePageState extends State<HomePage> {
     'https://static.vecteezy.com/system/resources/thumbnails/008/190/897/small/human-blood-donate-on-white-background-free-vector.jpg',
     'https://www.careinsurance.com/upload_master/media/posts/June2020/IQKrrYI3nqo0i9PNqO7W.jpg',
   ];
-
-  void _showLogoutDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          title: const Text(
-            'Are you sure you want to logout?',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          actionsAlignment: MainAxisAlignment.center,
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              child: const Text('OK', style: TextStyle(color: Colors.white)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              child: const Text('Cancel', style: TextStyle(color: Colors.white)),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +43,7 @@ class _HomePageState extends State<HomePage> {
         ),
         elevation: 0,
       ),
-      drawer: _buildDrawer(),
+      drawer: _buildDrawer(context),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                 );
               }).toList(),
             ),
-            
+
             // Carousel Indicators
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -141,7 +102,8 @@ class _HomePageState extends State<HomePage> {
                 return Container(
                   width: 8.0,
                   height: 8.0,
-                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 4.0),
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 4.0),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: _currentCarouselIndex == entry.key
@@ -151,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                 );
               }).toList(),
             ),
-            
+
             // Quick Actions Grid
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -168,14 +130,22 @@ class _HomePageState extends State<HomePage> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const FindDonorsPage()),
+                        MaterialPageRoute(
+                            builder: (context) => const FindDonorsPage()),
                       );
                     },
                   ),
                   _buildQuickActionCard(
                     icon: Icons.water_drop,
                     title: 'Donates',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const CreateDonationRequestScreen()),
+                      );
+                    },
                   ),
                   _buildQuickActionCard(
                     icon: Icons.bloodtype,
@@ -184,8 +154,14 @@ class _HomePageState extends State<HomePage> {
                   ),
                   _buildQuickActionCard(
                     icon: Icons.person,
-                    title: 'Assistant',
-                    onTap: () {},
+                    title: 'Help',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HelpScreen()),
+                      );
+                    },
                   ),
                   _buildQuickActionCard(
                     icon: Icons.description,
@@ -200,16 +176,16 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            
+
             // Donation Requests
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Donation Request',
-                    style: TextStyle(
+                    style: GoogleFonts.nunitoSans(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -226,7 +202,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            
+
             // Donation Request List
             ListView.builder(
               shrinkWrap: true,
@@ -234,7 +210,8 @@ class _HomePageState extends State<HomePage> {
               itemCount: 3, // Show only 3 items in the home page
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
                   child: Card(
                     elevation: 1,
                     shape: RoundedRectangleBorder(
@@ -247,10 +224,11 @@ class _HomePageState extends State<HomePage> {
                         child: Icon(Icons.person, color: Colors.white),
                       ),
                       title: const Text('Name'),
-                      subtitle: Text('Requested ${index + 1} hour${index == 0 ? '' : 's'} ago'),
+                      subtitle: Text(
+                          'Requested ${index + 1} hour${index == 0 ? '' : 's'} ago'),
                       trailing: Text(
                         ['A+', 'B-', 'O+'][index],
-                        style: const TextStyle(
+                        style: GoogleFonts.nunitoSans(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFFD32F2F),
                         ),
@@ -331,7 +309,7 @@ class _HomePageState extends State<HomePage> {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: GoogleFonts.nunitoSans(
                 color: Colors.grey[600],
                 fontSize: 14,
               ),
@@ -343,61 +321,195 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-  Widget _buildDrawer() {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(
-              color: const Color(0xFFD32F2F),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage: NetworkImage(
-                    'https://www.pngkey.com/png/detail/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png',
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'User Name',
-                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const Text(
-                  'user@example.com',
-                  style: TextStyle(color: Colors.white70, fontSize: 14),
-                ),
-              ],
-            ),
-          ),
-          _buildDrawerItem(Icons.home, 'Home', () {}),
-          _buildDrawerItem(Icons.search, 'Find Donors', () {}),
-          _buildDrawerItem(Icons.bloodtype, 'Blood Request', () {}),
-          _buildDrawerItem(Icons.request_page, 'Donation Request', () {}),
-          _buildDrawerItem(Icons.assistant, 'Assistant', () {}),
-          _buildDrawerItem(Icons.settings, 'Settings', () {}),
-          _buildDrawerItem(Icons.help, 'FAQ', () {}),
-          _buildDrawerItem(Icons.star, 'Reviews', () {}),
-          _buildDrawerItem(Icons.notifications, 'Notification', () {}),
-          _buildDrawerItem(Icons.privacy_tip, 'Privacy Policy', () {}),
-          _buildDrawerItem(Icons.person, 'Profile', () {}),
-          _buildDrawerItem(Icons.edit, 'Edit Profile', () {}),
-          const Divider(),
-          _buildDrawerItem(Icons.logout, 'Logout', () {
-            // Logout
-          }),
-        ],
-      ),
-    );
-  }
+// Widget _buildDrawer(BuildContext context) {
+//   return Drawer(
+//     child: ListView(
+//       padding: EdgeInsets.zero,
+//       children: [
+//         const DrawerHeader(
+//           decoration: BoxDecoration(
+//             color: const Color(0xFFD32F2F),
+//           ),
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               CircleAvatar(
+//                 radius: 30,
+//                 backgroundImage: NetworkImage(
+//                   'https://www.pngkey.com/png/detail/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png',
+//                 ),
+//               ),
+//               const SizedBox(height: 10),
+//               const Text(
+//                 'User Name',
+//                 style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+//               ),
+//               const Text(
+//                 'user@example.com',
+//                 style: TextStyle(color: Colors.white70, fontSize: 14),
+//               ),
+//             ],
+//           ),
+//         ),
+//         _buildDrawerItem(Icons.home, 'Home', () {
+//             Navigator.push(context, MaterialPageRoute(builder: (context) => const FindDonorsPage()));
 
-  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon, color: const Color(0xFFD32F2F)),
-      title: Text(title, style: const TextStyle(fontSize: 16)),
-      onTap: onTap,
-    );
-  }
+//         }),
+//         _buildDrawerItem(Icons.search, 'Find Donors', () {}),
+//         _buildDrawerItem(Icons.bloodtype, 'Blood Request', () {}),
+//         _buildDrawerItem(Icons.request_page, 'Donation Request', () {}),
+//         _buildDrawerItem(Icons.assistant, 'Assistant', () {}),
+//         _buildDrawerItem(Icons.settings, 'Settings', () {}),
+//         _buildDrawerItem(Icons.help, 'FAQ', () {}),
+//         _buildDrawerItem(Icons.notifications, 'Notification', () {}),
+//         _buildDrawerItem(Icons.person, 'Profile', () {}),
+//         _buildDrawerItem(Icons.edit, 'Edit Profile', () {}),
+//         _buildDrawerItem(Icons.logout, 'Logout', () {
+//           // Logout
+//         }),
+//       ],
+//     ),
+//   );
+// }
+
+Widget _buildDrawer(BuildContext context) {
+  return Drawer(
+    child: ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        DrawerHeader(
+          decoration: BoxDecoration(color: Color(0xFFD32F2F)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage(
+                  'https://www.pngkey.com/png/detail/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png',
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'User Name',
+                style: GoogleFonts.nunitoSans(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'user@example.com',
+                style:
+                    GoogleFonts.nunitoSans(color: Colors.white70, fontSize: 14),
+              ),
+            ],
+          ),
+        ),
+        _buildDrawerItem(context, Icons.home, 'Home', () {
+          Navigator.pop(context);
+        }),
+        _buildDrawerItem(context, Icons.search, 'Find Donors', () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const FindDonorsPage()),
+          );
+        }),
+        _buildDrawerItem(context, Icons.bloodtype, 'Blood Request', () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const CreateDonationRequestScreen()),
+          );
+        }),
+        _buildDrawerItem(context, Icons.request_page, 'Donation Request', () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const CreateDonationRequestScreen()),
+          );
+        }),
+        _buildDrawerItem(context, Icons.help, 'FAQ', () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HelpScreen()),
+          );
+        }),
+        _buildDrawerItem(context, Icons.person, 'Profile', () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ProfilePage()),
+          );
+        }),
+        _buildDrawerItem(context, Icons.notifications, 'Notification', () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ProfilePage()),
+          );
+        }),
+        _buildDrawerItem(context, Icons.logout, 'Logout', () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                title: Text(
+                  'Are you sure you want to logout?',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.nunitoSans(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                actionsAlignment: MainAxisAlignment.center,
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close dialog
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: Text('OK',
+                        style: GoogleFonts.nunitoSans(color: Colors.white)),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: Text('Cancel',
+                        style: GoogleFonts.nunitoSans(color: Colors.white)),
+                  ),
+                ],
+              );
+            },
+          );
+        }),
+      ],
+    ),
+  );
+}
+
+Widget _buildDrawerItem(
+    BuildContext context, IconData icon, String title, VoidCallback onTap) {
+  return ListTile(
+    leading: Icon(icon, color: const Color(0xFFD32F2F)),
+    title: Text(title, style: const TextStyle(fontSize: 16)),
+    onTap: onTap,
+  );
+}

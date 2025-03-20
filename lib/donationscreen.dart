@@ -20,9 +20,12 @@ class _DonationScreenState extends State<DonationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color(0xFFD32F2F),
+        foregroundColor: Colors.white,
         title: const Text('Donate Blood'),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+        icon: const Icon(Icons.arrow_back),
+        color: Colors.white,
           onPressed: () {
             Navigator.pop(context);
           },
