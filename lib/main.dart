@@ -9,13 +9,23 @@ import 'package:blood_donate_app/user_type_page.dart';
 import 'package:flutter/material.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Ensure plugin services are initialized
+
+  // Check and request location permission
+  if (await Permission.locationWhenInUse.isDenied) {
+    await Permission.locationWhenInUse.request();
+  }
+
   runApp(const MyApp());
 }
 
+
 class MyApp extends StatelessWidget {
+  
   const MyApp({super.key});
 
   @override
@@ -46,7 +56,7 @@ class MyApp extends StatelessWidget {
         '/splash': (context) => const SplashScreen(),
         '/home': (context) => const HomePage(),
         '/donation': (context) => const DonationScreen(),
-        '/signup': (context) => const SignupPage(userType: "Doner",),
+        '/signup': (context) => const SignupPage(),
         '/login': (context) => const LoginScreen(),
         '/donor_receiver_selection': (context) =>
             const DonorReceiverSelectionScreen(),

@@ -1,12 +1,15 @@
 import 'package:blood_donate_app/HelpScreen.dart';
+import 'package:blood_donate_app/blood_req.dart';
 import 'package:blood_donate_app/donation_req.dart';
-import 'package:blood_donate_app/donationscreen.dart';
 import 'package:blood_donate_app/loginscreen.dart';
+import 'package:blood_donate_app/screens/notification_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'find_donors_page.dart';
 import 'profile_page.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,6 +19,32 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+    String _userName = "User Name";
+  String _userEmail = "user@example.com";
+  String _profilePicture =
+      "https://www.pngkey.com/png/detail/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString('userData');
+
+    if (userData != null) {
+      Map<String, dynamic> user = jsonDecode(userData);
+      setState(() {
+        _userName = user['name'] ?? "User Name";
+        _userEmail = user['email'] ?? "user@example.com";
+        _profilePicture = user['profilePicture'] ??
+            "https://png.pngtree.com/png-clipart/20231019/original/pngtree-user-profile-avatar-png-image_13369991.png";
+      });
+    }
+  }
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentCarouselIndex = 0;
   final List<String> _carouselImages = [
@@ -43,7 +72,7 @@ class _HomePageState extends State<HomePage> {
         ),
         elevation: 0,
       ),
-      drawer: _buildDrawer(context),
+      drawer: _buildDrawer(context,_userName,_userEmail,_profilePicture),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,7 +179,14 @@ class _HomePageState extends State<HomePage> {
                   _buildQuickActionCard(
                     icon: Icons.bloodtype,
                     title: 'Order Bloods',
-                    onTap: () {},
+                    onTap: () {
+                       Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const BloodRequestScreen()),
+                      );
+                    },
                   ),
                   _buildQuickActionCard(
                     icon: Icons.person,
@@ -372,7 +408,7 @@ class _HomePageState extends State<HomePage> {
 //   );
 // }
 
-Widget _buildDrawer(BuildContext context) {
+Widget _buildDrawer(BuildContext context, String userName, String userEmail, String profilePicture) {
   return Drawer(
     child: ListView(
       padding: EdgeInsets.zero,
@@ -382,22 +418,21 @@ Widget _buildDrawer(BuildContext context) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 30,
-                backgroundImage: NetworkImage(
-                  'https://www.pngkey.com/png/detail/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png',
-                ),
+                backgroundImage: NetworkImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSppkoKsaYMuIoNLDH7O8ePOacLPG1mKXtEng&s"),
+
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
-                'User Name',
+                userName,
                 style: GoogleFonts.nunitoSans(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
               Text(
-                'user@example.com',
+                userEmail,
                 style:
                     GoogleFonts.nunitoSans(color: Colors.white70, fontSize: 14),
               ),
@@ -419,7 +454,7 @@ Widget _buildDrawer(BuildContext context) {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const CreateDonationRequestScreen()),
+                builder: (context) => const BloodRequestScreen()),
           );
         }),
         _buildDrawerItem(context, Icons.request_page, 'Donation Request', () {
@@ -448,7 +483,7 @@ Widget _buildDrawer(BuildContext context) {
           Navigator.pop(context);
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const ProfilePage()),
+            MaterialPageRoute(builder: (context) => const NotificationScreen()),
           );
         }),
         _buildDrawerItem(context, Icons.logout, 'Logout', () {
@@ -467,8 +502,12 @@ Widget _buildDrawer(BuildContext context) {
                 actionsAlignment: MainAxisAlignment.center,
                 actions: [
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: ()async {
                       Navigator.of(context).pop(); // Close dialog
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool("isSignedIn", false);
+                      await prefs.remove("userData"); // Clear user data
+
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

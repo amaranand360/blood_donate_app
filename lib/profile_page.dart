@@ -1,7 +1,12 @@
+import 'package:blood_donate_app/widgets/profile_info_item.dart';
 import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'find_donors_page.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -11,30 +16,125 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  String _userName = "User Name";
+  String _userEmail = "user@example.com";
+  String _userAge = "25";
+  String _userGender = "Male";
+  String _userBloodGroup = "A+";
+  String _userPhone = "1234567890";
+  String _profilePicture =
+      "https://png.pngtree.com/png-clipart/20231019/original/pngtree-user-profile-avatar-png-image_13369991.png";
+  String _location = "Location not set";
   bool _isAvailableForDonation = true;
+  bool _isLoading = true; // To show a loading indicator
+  int _donatedCount = 0;
+  int _requestedCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? userData = prefs.getString('userData');
+
+      if (userData != null) {
+        Map<String, dynamic> user = jsonDecode(userData);
+        print(userData);
+        setState(() {
+          _userName = user['name'] ?? "User Name";
+          _userEmail = user['email'] ?? "user@example.com";
+          _userPhone = user['phone'] ?? "1234567890";
+          _userAge = user['age']?.toString() ?? "25";
+          _userGender = user['gender'] ?? "Male";
+          _userBloodGroup = user['bloodGroup'] ?? "A+";
+          _profilePicture = user['profilePicture'] ??
+              "https://png.pngtree.com/png-clipart/20231019/original/pngtree-user-profile-avatar-png-image_13369991.png";
+          _location = user['address'] ?? "Electronic City, Bangalore, India";
+          _isAvailableForDonation = user['isAvailableForDonation'] ?? true;
+          _donatedCount = user['donatedCount'] ?? 0;
+          _requestedCount = user['requestedCount'] ?? 0;
+        });
+      }
+      
+      // Load donation stats
+      _loadDonationStats();
+    } catch (e) {
+      print("Error loading user data: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+  
+  Future<void> _loadDonationStats() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      
+      // Get donation count
+      int donated = prefs.getInt('donatedCount') ?? 4;
+      int requested = prefs.getInt('requestedCount') ?? 6;
+      
+      setState(() {
+        _donatedCount = donated;
+        _requestedCount = requested;
+      });
+    } catch (e) {
+      print("Error loading donation stats: $e");
+    }
+  }
+  
+  Future<void> _updateAvailabilityStatus(bool isAvailable) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? userData = prefs.getString('userData');
+      
+      if (userData != null) {
+        Map<String, dynamic> user = jsonDecode(userData);
+        user['isAvailableForDonation'] = isAvailable;
+        
+        await prefs.setString('userData', jsonEncode(user));
+      }
+    } catch (e) {
+      print("Error updating availability status: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFD32F2F),
-        title:  Text(
+        title: Text(
           'Profile',
-          style: GoogleFonts.nunitoSans(color: Colors.white, fontWeight: FontWeight.bold),
+          style: GoogleFonts.nunitoSans(
+              color: Colors.white, fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           color: Colors.white,
           onPressed: () {
-              Navigator.pop(context);
+            Navigator.pop(context);
           },
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: _loadUserData,
+          ),
           TextButton(
             onPressed: () {
               // Navigate to edit profile
             },
-            child:  Text(
+            child: Text(
               'Edit',
               style: GoogleFonts.nunitoSans(
                 color: Colors.white,
@@ -45,160 +145,139 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Profile Header
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(16.0),
+      body: _isLoading 
+        ? const Center(child: CircularProgressIndicator(color: Color(0xFFD32F2F)))
+        : RefreshIndicator(
+            onRefresh: _loadUserData,
+            color: const Color(0xFFD32F2F),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
-                  // Profile Image
-                  Center(
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Colors.grey[300],
-                      backgroundImage: const NetworkImage(
-                        'https://png.pngtree.com/png-clipart/20231019/original/pngtree-user-profile-avatar-png-image_13369991.png', // Replace with actual image URL
-                      ),
-                      onBackgroundImageError: (exception, stackTrace) {},
-                      child: const Icon(
-                        Icons.person,
-                        size: 50,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Name
-                   Text(
-                    'Alice Capsey',
-                    style: GoogleFonts.nunitoSans(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  
-                  // Location
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.location_on, color: Colors.grey[600], size: 18),
-                      const SizedBox(width: 4),
-                      Text(
-                        'General Hospital, Rajkot',
-                        style: GoogleFonts.nunitoSans(
-                          color: Colors.grey[600],
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Action Buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          icon: const Icon(Icons.phone),
-                          label: const Text('Call Now'),
-                          onPressed: () {
-                            // Make a call
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF3b5998),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
+                  // Profile Header
+                  Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        // Profile Image
+                        Center(
+                          child: CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.grey[300],
+                            backgroundImage: NetworkImage(
+                              _profilePicture, // Use the variable, not hardcoded URL
                             ),
+                            onBackgroundImageError: (exception, stackTrace) {
+                              print("Error loading profile image: $exception");
+                            },
+                            child: _profilePicture.isEmpty 
+                              ? const Icon(
+                                  Icons.person,
+                                  size: 50,
+                                  color: Colors.white,
+                                )
+                              : null,
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          icon: const Icon(Icons.send),
-                          label: const Text('Request'),
-                          onPressed: () {
-                            // Send request
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFD32F2F),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
+                        const SizedBox(height: 16),
+
+                        // Name
+                        Text(
+                          _userName,
+                          style: GoogleFonts.nunitoSans(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 8),
+
+                        // Location
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.location_on,
+                                color: Colors.grey[600], size: 18),
+                            const SizedBox(width: 4),
+                            Text(
+                              _location,
+                              style: GoogleFonts.nunitoSans(
+                                color: Colors.grey[600],
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                  ),
+
+                  // Stats Cards
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 10),
+                    child: Row(
+                      children: [
+                        _buildStatCard(_userBloodGroup, 'Blood Type'),
+                        _buildStatCard(_donatedCount.toString(), 'Donated'),
+                        _buildStatCard(_requestedCount.toString(), 'Requested'),
+                      ],
+                    ),
+                  ),
+
+                  const Divider(height: 1),
+
+                  _buildAboutTab({
+                    'age': _userAge,
+                    'gender': _userGender,
+                    'city': _location,
+                    'country': 'India',
+                    'phone': _userPhone,
+                    'email': _userEmail,
+                  }),
+
+                  // Available for donation toggle
+                  ListTile(
+                    leading:
+                        const Icon(Icons.calendar_today, color: Color(0xFFD32F2F)),
+                    title: const Text('Available for donate'),
+                    trailing: Switch(
+                      value: _isAvailableForDonation,
+                      onChanged: (value) {
+                        setState(() {
+                          _isAvailableForDonation = value;
+                        });
+                        _updateAvailabilityStatus(value);
+                      },
+                      activeColor: _isAvailableForDonation
+                          ? const Color(0xFFD32F2F)
+                          : Colors.grey,
+                      inactiveThumbColor: Colors.grey,
+                      inactiveTrackColor: Colors.grey[400],
+                    ),
+                  ),
+
+                  const Divider(height: 1),
+
+                  // Menu Items
+                  _buildMenuItem(
+                    icon: Icons.share,
+                    title: 'Invite a friend',
+                    onTap: () {
+                      // Invite a friend
+                    },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.edit,
+                    title: 'Edit Profile',
+                    onTap: () {
+                      // Edit profile
+                    },
                   ),
                 ],
               ),
             ),
-            
-            // Stats Cards
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Row(
-                children: [
-                  _buildStatCard('A+', 'Blood Type'),
-                  _buildStatCard('06', 'Donated'),
-                  _buildStatCard('03', 'Requested'),
-                ],
-              ),
-            ),
-            
-            const Divider(height: 1),
-            
-            // Available for donation toggle
-            ListTile(
-              leading: const Icon(Icons.calendar_today, color: Color(0xFFD32F2F)),
-              title: const Text('Available for donate'),
-              trailing: Switch(
-                value: _isAvailableForDonation,
-                onChanged: (value) {
-                  setState(() {
-                    _isAvailableForDonation = value;
-                  });
-                },
-                activeColor: const Color(0xFFD32F2F),
-              ),
-            ),
-            
-            const Divider(height: 1),
-            
-            // Menu Items
-            _buildMenuItem(
-              icon: Icons.share,
-              title: 'Invite a friend',
-              onTap: () {
-                // Invite a friend
-              },
-            ),
-            _buildMenuItem(
-              icon: Icons.edit,
-              title: 'Edit Profile',
-              onTap: () {
-                // Edit profile
-              },
-            ),
-            _buildMenuItem(
-              icon: Icons.help,
-              title: 'Help',
-              onTap: () {
-                // Help
-              },
-            ),
-          ],
-        ),
-      ),
+          ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 3,
         selectedItemColor: const Color(0xFFD32F2F),
@@ -224,7 +303,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
         onTap: (index) {
           if (index == 0) {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const HomePage()),
             );
@@ -232,12 +311,6 @@ class _ProfilePageState extends State<ProfilePage> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const FindDonorsPage()),
-            );
-          }
-          else if(index == 3) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ProfilePage()),
             );
           }
         },
@@ -259,7 +332,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               Text(
                 value,
-                style:  GoogleFonts.nunitoSans(
+                style: GoogleFonts.nunitoSans(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
@@ -298,7 +371,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(width: 16),
             Text(
               title,
-              style:  GoogleFonts.nunitoSans(
+              style: GoogleFonts.nunitoSans(
                 fontSize: 16,
               ),
             ),
@@ -306,5 +379,60 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
     );
+  }
+
+  Widget _buildAboutTab(Map<String, dynamic> profile) {
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'About User',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            ProfileInfoItem(
+              icon: Icons.cake,
+              iconBackgroundColor: Colors.red,
+              label: 'Age',
+              value: profile['age']?.toString() ?? 'N/A',
+            ),
+            ProfileInfoItem(
+              icon: Icons.person,
+              iconBackgroundColor: Colors.red,
+              label: 'Gender',
+              value: profile['gender'] ?? 'Not specified',
+            ),
+            ProfileInfoItem(
+              icon: Icons.location_city,
+              iconBackgroundColor: Colors.red,
+              label: 'City',
+              value: profile['city'] ?? 'Unknown',
+            ),
+            ProfileInfoItem(
+              icon: Icons.public,
+              iconBackgroundColor: Colors.red,
+              label: 'Country',
+              value: profile['country'] ?? 'Not provided',
+            ),
+            ProfileInfoItem(
+              icon: Icons.phone,
+              iconBackgroundColor: Colors.red,
+              label: 'Mobile',
+              value: profile['phone'] ?? 'Not available',
+            ),
+            ProfileInfoItem(
+              icon: Icons.email,
+              iconBackgroundColor: Colors.red,
+              label: 'Email',
+              value: profile['email'] ?? 'Not available',
+            ),
+            const SizedBox(height: 24),
+          ],
+        ));
   }
 }
